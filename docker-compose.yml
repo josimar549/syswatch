@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  syswatch:
+    build: .
+    container_name: syswatch
+    restart: unless-stopped
+
+    # Mount a local logs directory so metrics persist outside the container
+    volumes:
+      - ./logs:/app/logs
+
+    # Override defaults here if needed
+    environment:
+      - PYTHONUNBUFFERED=1
+
+    # Run every 60 seconds, write JSON logs
+    command: >
+      python syswatch.py
+      --interval 60
+      --json
+      --output /app/logs/metrics.jsonl
+      --cpu-threshold 80
+      --mem-threshold 80
+      --disk-threshold 85
